@@ -1,0 +1,5 @@
+<library path="fixed_planner_plugin">
+	<class name="fixed_planner/WaypointInterpolatedPlanner" type="fixed_planner::WaypointInterpolatedPlanner" base_class_type="nav2_core::GlobalPlanner">
+	  <description>This is a plugin which produces a fixed pre-programmed path.</description>
+	</class>
+</library>
