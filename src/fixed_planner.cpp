@@ -32,12 +32,12 @@ void WaypointInterpolatedPlanner::configure(
         );
     m_node->get_parameter(m_name + ".rotational_interpolation_resolution", m_rotational_interpolation_resolution);
 
-    //nav2_util::declare_parameter_if_not_declared(
-    //    m_node, 
-    //    m_name + ".interpolate_waypoints", 
-    //    rclcpp::ParameterValue(bool false)
-    //    );
-    //m_node->get_parameter(m_name + ".interpolate_waypoints", m_interpolate_waypoints);
+    nav2_util::declare_parameter_if_not_declared(
+        m_node, 
+        m_name + ".interpolate_waypoints", 
+        rclcpp::ParameterValue(false)
+        );
+    m_node->get_parameter(m_name + ".interpolate_waypoints", m_interpolate_waypoints);
 
     //nav2_util::declare_parameter_if_not_declared(
     //    m_node, 
@@ -60,20 +60,20 @@ void WaypointInterpolatedPlanner::configure(
     //    );
     //m_node->get_parameter(m_name + ".theta_displacement_list", m_theta_displacement_list);
 
-    //nav2_util::declare_parameter_if_not_declared(
-    //    m_node, 
-    //    m_name + ".zero_pose", 
-    //    rclcpp::ParameterValue(std::vector<double>{0.0, 0.0, 0.0})
-    //    );
-    //m_node->get_parameter(m_name + ".zero_pose", m_zero_pose);
+    nav2_util::declare_parameter_if_not_declared(
+        m_node, 
+        m_name + ".zero_pose", 
+        rclcpp::ParameterValue(std::vector<double>{0.0, 0.0, 0.0})
+        );
+    m_node->get_parameter(m_name + ".zero_pose", m_zero_pose);
     
     // TODO - do parameters checks
 
     // TODO - Remove and use parameters instead
     double zero_x, zero_y, zero_theta;
-    zero_x = 0.0;
-    zero_y = 0.0;
-    zero_theta = 0.0;
+    zero_x = m_zero_pose[0];
+    zero_y = m_zero_pose[1];
+    zero_theta = m_zero_pose[2];
     m_waypoint_list.push_back({zero_x, zero_y, zero_theta});     // x, y, theta
     m_waypoint_list.push_back({zero_x + 0.0, zero_y + 1.0, zero_theta + 0.0});      // 0 1 0
     m_waypoint_list.push_back({zero_x + 0.5, zero_y + 1.0, zero_theta + 0.0});      // 0.5 1 0
@@ -225,6 +225,7 @@ nav_msgs::msg::Path WaypointInterpolatedPlanner::createPlan(
     final_pose.pose.orientation.y = q.y();
     final_pose.pose.orientation.z = q.z();
     final_pose.pose.orientation.w = q.w();
+    global_path.poses.push_back(final_pose);
 
     return global_path;
 }

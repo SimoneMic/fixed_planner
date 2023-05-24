@@ -50,6 +50,7 @@ private:
     std::string m_global_frame;
     std::string m_name;
     double m_interpolation_resolution, m_rotational_interpolation_resolution;
+    std::vector<double> m_zero_pose{0.0, 0.0, 0.0};
 
     std::vector<std::vector<double>> m_waypoint_list;
     bool m_interpolate_waypoints{true};
