@@ -1,0 +1,5 @@
+<library path="local_fixed_controller">
+	<class name="local_fixed_controller/LocalFixedController" type="local_fixed_controller::LocalFixedController" base_class_type="nav2_core::Controller">
+	  <description>This is a controller plugin which follows a fixed pre-programmed path. Giving in output the corrected path starting from the robot position.</description>
+	</class>
+</library>
