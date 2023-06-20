@@ -9,15 +9,6 @@
 
 namespace local_fixed_controller{
 
-//Default Constructor
-LocalFixedController::LocalFixedController() :
-m_tf_tol(0.1),
-m_radial_tol(0.1),
-m_start_index(0),
-m_topic_name("/tracked_plan")
-{
-}
-
 void LocalFixedController::configure(const rclcpp_lifecycle::LifecycleNode::WeakPtr & parent,
         std::string name,
         std::shared_ptr<tf2_ros::Buffer> tf,
@@ -70,8 +61,10 @@ nav_msgs::msg::Path LocalFixedController::transformGlobalPlan(const nav_msgs::ms
          it != path.poses.end();
          ++it, ++out_iter)
     {
-        //tf2::doTransform(it->pose, out_iter->pose, m_tf->lookupTransform(out_path.header.frame_id, path.header.frame_id, tf2::getTimestamp(it), tf2::durationFromSec(m_tf_tol)));
-        m_tf->transform(it, out_iter, out_path.header.frame_id, tf2::durationFromSec(m_tf_tol));
+        tf2::doTransform(it->pose, 
+                        out_iter->pose, 
+                        m_tf->lookupTransform(out_path.header.frame_id, path.header.frame_id, tf2::getTimestamp(it), 
+                        tf2::durationFromSec(m_tf_tol)));
     }
     //remove the already passed poses
     out_path = planTracking(out_path);
@@ -118,6 +111,28 @@ nav_msgs::msg::Path LocalFixedController::planTracking(const nav_msgs::msg::Path
     
     return out_path;
 }
+
+geometry_msgs::msg::TwistStamped LocalFixedController::computeVelocityCommands(
+    const geometry_msgs::msg::PoseStamped & pose,
+    const geometry_msgs::msg::Twist & velocity,
+    nav2_core::GoalChecker * goal_checker)
+{
+    geometry_msgs::msg::TwistStamped msg_out;
+    msg_out.header.frame_id = m_costmap->getBaseFrameID();
+    msg_out.header.stamp = m_node->now();
+    double d_x = m_global_path.poses[1].pose.position.x - pose.pose.position.x;
+    double d_y = m_global_path.poses[1].pose.position.y - pose.pose.position.y;
+    msg_out.twist.linear.x = d_x/10;
+    msg_out.twist.linear.y = d_y/10;
+    msg_out.twist.linear.z = .0;
+    msg_out.twist.angular.x = .0;
+    msg_out.twist.angular.y = .0;
+    msg_out.twist.angular.z = .0;
+    return msg_out;
+}
+
+void LocalFixedController::setSpeedLimit(const double & speed_limit, const bool & percentage)
+{}
 
 }
 

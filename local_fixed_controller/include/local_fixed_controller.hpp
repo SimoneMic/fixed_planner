@@ -56,7 +56,32 @@ public:
 
     void setPlan(const nav_msgs::msg::Path & path) override;
     
+    /**
+    * @brief Controller computeVelocityCommands - calculates the best command given the current pose and velocity
+    *
+    * It is presumed that the global plan is already set.
+    *
+    * This is mostly a wrapper for the protected computeVelocityCommands
+    * function which has additional debugging info.
+    *
+    * @param pose Current robot pose
+    * @param velocity Current robot velocity
+    * @param goal_checker Pointer to the current goal checker the task is utilizing
+    * @return The best command for the robot to drive
+    */
+    geometry_msgs::msg::TwistStamped computeVelocityCommands(
+        const geometry_msgs::msg::PoseStamped & pose,
+        const geometry_msgs::msg::Twist & velocity,
+        nav2_core::GoalChecker * goal_checker) override;
 
+    /**
+    * @brief Limits the maximum linear speed of the robot.
+    * @param speed_limit expressed in absolute value (in m/s)
+    * or in percentage from maximum robot speed.
+    * @param percentage Setting speed limit in percentage if true
+    * or in absolute values in false case.
+    */
+    void setSpeedLimit(const double & speed_limit, const bool & percentage) override;
 
 };
 
